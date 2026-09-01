@@ -1,10 +1,10 @@
 {
-  "updatedAt": "2026-08-24T16:52:03.738Z",
+  "updatedAt": "2026-09-01T00:42:21.783Z",
   "counts": {
-    "estoque": 895,
-    "compras": 37,
-    "consumo": 1428,
-    "vendas": 5753,
-    "ordens": 35
+    "estoque": 894,
+    "compras": 24,
+    "consumo": 1448,
+    "vendas": 6250,
+    "ordens": 48
   }
 }
