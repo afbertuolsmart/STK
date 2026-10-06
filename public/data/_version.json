@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-10-05T23:45:50.459Z",
-  "updatedAtLocal": "05/10/2026, 20:45:50",
+  "updatedAt": "2026-10-06T00:27:33.468Z",
+  "updatedAtLocal": "05/10/2026, 21:27:33",
   "counts": {
-    "estoque": 848,
-    "compras": 22,
-    "consumo": 1417,
-    "vendas": 6638,
-    "ordens": 36
+    "estoque": 2762,
+    "compras": 23,
+    "consumo": 1400,
+    "vendas": 6559,
+    "ordens": 58
   }
 }
