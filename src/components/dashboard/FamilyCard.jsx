@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 
 import { Card } from '@/components/ui/card';
@@ -36,6 +37,15 @@ const COLORS = {
   },
 };
 
+function normalizarTexto(valor) {
+  return String(valor ?? '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toUpperCase();
+}
+
 export function FamilyCard({
   family,
   onSelectColor,
@@ -45,7 +55,16 @@ export function FamilyCard({
 }) {
   const [expanded, setExpanded] = useState(false);
 
-  const isExpanded = forceExpanded || expanded;
+  const isExpanded = Boolean(forceExpanded || expanded);
+
+  const nomeFamilia = normalizarTexto(
+    family?.familia ??
+    family?.nome ??
+    family?.name ??
+    ''
+  );
+
+  const isNapaMadrid = nomeFamilia.includes('NAPA MADRID');
 
   const origemColor =
     family.origem === 'Importado'
@@ -58,7 +77,7 @@ export function FamilyCard({
     if (onFocus) {
       onFocus();
     } else {
-      setExpanded(!expanded);
+      setExpanded((prev) => !prev);
     }
   };
 
@@ -74,24 +93,20 @@ export function FamilyCard({
         hover:shadow-[0_5px_16px_rgba(15,23,42,0.07)]
       "
     >
+      {/* CABEÇALHO DA FAMÍLIA */}
       <div
         className={`
-          p-3.5
-          transition-colors
+          p-3.5 transition-colors
           ${forceExpanded ? '' : 'cursor-pointer hover:bg-slate-50/40'}
         `}
         onClick={handleHeaderClick}
       >
-        {/* CABEÇALHO */}
-        <div className="flex items-start justify-between mb-3">
-          <div className="flex items-start gap-2 min-w-0">
+        <div className="mb-3 flex items-start justify-between">
+          <div className="flex min-w-0 items-start gap-2">
             <div
               className="
-                flex h-6 w-6 shrink-0
-                items-center justify-center
-                rounded-md
-                bg-slate-50
-                border border-slate-100
+                flex h-6 w-6 shrink-0 items-center justify-center
+                rounded-md border border-slate-100 bg-slate-50
               "
             >
               {isExpanded ? (
@@ -102,7 +117,7 @@ export function FamilyCard({
             </div>
 
             <div className="min-w-0">
-              <h3 className="text-[13px] font-semibold leading-5 text-slate-800 truncate">
+              <h3 className="truncate text-[13px] font-semibold leading-5 text-slate-800">
                 {family.familia}
               </h3>
 
@@ -112,33 +127,38 @@ export function FamilyCard({
             </div>
           </div>
 
-          <Badge
-            variant="outline"
-            className={`
-              ml-2
-              shrink-0
-              rounded-full
-              px-2
-              py-0.5
-              text-[9px]
-              font-medium
-              ${origemColor}
-            `}
-          >
-            {family.origem}
-          </Badge>
+          {isNapaMadrid ? (
+            <Badge
+              variant="outline"
+              className="
+                ml-2 shrink-0 rounded-full
+                border-slate-200 bg-slate-100
+                px-2 py-0.5 text-[9px] font-semibold text-slate-700
+              "
+            >
+              NAPA MADRID
+            </Badge>
+          ) : (
+            <Badge
+              variant="outline"
+              className={`
+                ml-2 shrink-0 rounded-full
+                px-2 py-0.5 text-[9px] font-medium
+                ${origemColor}
+              `}
+            >
+              {family.origem}
+            </Badge>
+          )}
         </div>
 
         {/* ESTOQUE GERAL */}
         <div
           className={`
-            rounded-xl
-            border
+            mb-2.5 rounded-xl border
             ${COLORS.primary.border}
             ${COLORS.primary.bg}
-            px-3
-            py-3
-            mb-2.5
+            px-3 py-3
           `}
         >
           <div className="flex items-start justify-between">
@@ -149,11 +169,8 @@ export function FamilyCard({
 
               <p
                 className={`
-                  mt-0.5
-                  text-[21px]
-                  leading-7
-                  font-semibold
-                  tracking-tight
+                  mt-0.5 text-[21px] leading-7
+                  font-semibold tracking-tight
                   ${COLORS.primary.text}
                 `}
               >
@@ -167,51 +184,31 @@ export function FamilyCard({
           </div>
 
           {/* INDICADORES */}
-          <div className="grid grid-cols-2 gap-x-6 gap-y-2 mt-3">
+          <div className="mt-3 grid grid-cols-2 gap-x-6 gap-y-2">
             <div>
-              <p className="text-[9px] text-slate-400">
-                Estoque
-              </p>
-
-              <p
-                className={`mt-0.5 text-[11px] font-medium ${COLORS.neutral.text}`}
-              >
+              <p className="text-[9px] text-slate-400">Estoque</p>
+              <p className={`mt-0.5 text-[11px] font-medium ${COLORS.neutral.text}`}>
                 {fmtQty(family.estoque)}
               </p>
             </div>
 
             <div>
-              <p className="text-[9px] text-slate-400">
-                Compras
-              </p>
-
-              <p
-                className={`mt-0.5 text-[11px] font-medium ${COLORS.purchase.text}`}
-              >
+              <p className="text-[9px] text-slate-400">Compras</p>
+              <p className={`mt-0.5 text-[11px] font-medium ${COLORS.purchase.text}`}>
                 {fmtQty(family.compras)}
               </p>
             </div>
 
             <div>
-              <p className="text-[9px] text-slate-400">
-                OP
-              </p>
-
-              <p
-                className={`mt-0.5 text-[11px] font-medium ${COLORS.production.text}`}
-              >
+              <p className="text-[9px] text-slate-400">OP</p>
+              <p className={`mt-0.5 text-[11px] font-medium ${COLORS.production.text}`}>
                 {fmtQty(family.op)}
               </p>
             </div>
 
             <div>
-              <p className="text-[9px] text-slate-400">
-                Vendas
-              </p>
-
-              <p
-                className={`mt-0.5 text-[11px] font-medium ${COLORS.sales.text}`}
-              >
+              <p className="text-[9px] text-slate-400">Vendas</p>
+              <p className={`mt-0.5 text-[11px] font-medium ${COLORS.sales.text}`}>
                 {fmtQty(family.vendas)}
               </p>
             </div>
@@ -219,16 +216,7 @@ export function FamilyCard({
         </div>
 
         {/* SAÍDA TOTAL */}
-        <div
-          className="
-            rounded-xl
-            border border-[#dbe7ec]
-            bg-[#eef4f7]
-            px-3
-            py-2.5
-            mb-2.5
-          "
-        >
+        <div className="mb-2.5 rounded-xl border border-[#dbe7ec] bg-[#eef4f7] px-3 py-2.5">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-[9px] uppercase tracking-[0.06em] text-slate-500">
@@ -250,22 +238,9 @@ export function FamilyCard({
         </div>
 
         {/* CONSUMO */}
-        <div
-          className="
-            flex
-            items-center
-            justify-between
-            rounded-xl
-            border border-[#f2dfd2]
-            bg-[#fff3ea]
-            px-3
-            py-2.5
-          "
-        >
+        <div className="flex items-center justify-between rounded-xl border border-[#f2dfd2] bg-[#fff3ea] px-3 py-2.5">
           <div>
-            <p className="text-[9px] text-slate-500">
-              Consumo (12m)
-            </p>
+            <p className="text-[9px] text-slate-500">Consumo (12m)</p>
 
             <p className="mt-0.5 text-[12px] font-semibold text-[#d96b32]">
               {fmtQty(family.consumo)}
@@ -279,7 +254,7 @@ export function FamilyCard({
 
         {/* ESTOQUE POR LOCAL */}
         {(family.estoqueRS > 0 || family.estoqueSC > 0) && (
-          <div className="flex gap-4 mt-2.5 px-1 text-[9px] text-slate-400">
+          <div className="mt-2.5 flex gap-4 px-1 text-[9px] text-slate-400">
             <span>
               RS (SMT):{' '}
               <strong className="font-medium text-slate-600">
@@ -297,9 +272,9 @@ export function FamilyCard({
         )}
       </div>
 
-      {/* EXPANSÃO */}
+      {/* DETALHES E CORES */}
       {isExpanded && (
-        <div className="border-t border-slate-100 bg-slate-50/40 p-3 space-y-3">
+        <div className="space-y-3 border-t border-slate-100 bg-slate-50/40 p-3">
           <TrendPanel
             consumoByDay={family.consumoByDay}
             vendasByDay={family.vendasByDay}
@@ -309,11 +284,13 @@ export function FamilyCard({
             Clique numa cor para analisar
           </p>
 
-          <div className="max-h-[320px] overflow-y-auto pr-1 space-y-2">
+          <div className="max-h-[320px] space-y-2 overflow-y-auto pr-1">
             {family.cores.map((cor) => (
               <ColorDetail
                 key={cor.cor}
                 cor={cor}
+                origem={family.origem}
+                showNapaMadridCategory={isNapaMadrid}
                 selected={selectedCorName === cor.cor}
                 onSelectColor={(corName) =>
                   onSelectColor(
