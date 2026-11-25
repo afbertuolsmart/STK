@@ -1,13 +1,23 @@
+
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
 
-export function FilterBar({ sigFilter, setSigFilter, origemFilter, setOrigemFilter, search, setSearch }) {
+export function FilterBar({
+  sigFilter,
+  setSigFilter,
+  origemFilter,
+  setOrigemFilter,
+  search,
+  setSearch
+}) {
   const sigOptions = [
     { value: '', label: 'Todas' },
     { value: 'SMT', label: 'RS (SMT)' },
     { value: 'SM3', label: 'SC (SM3)' },
+    { value: 'EADI', label: 'EADI' },
   ];
+
   const origemOptions = [
     { value: '', label: 'Todas' },
     { value: 'Importado', label: 'Importado' },
@@ -18,6 +28,7 @@ export function FilterBar({ sigFilter, setSigFilter, origemFilter, setOrigemFilt
     <div className="flex flex-col md:flex-row gap-3 mb-6">
       <div className="relative flex-1">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+
         <Input
           placeholder="Buscar família..."
           value={search}
@@ -25,10 +36,14 @@ export function FilterBar({ sigFilter, setSigFilter, origemFilter, setOrigemFilt
           className="pl-9"
         />
       </div>
-      <div className="flex gap-3">
+
+      <div className="flex gap-3 flex-wrap">
         <div className="flex flex-col gap-1">
-          <span className="text-xs text-muted-foreground px-1">Filial</span>
-          <div className="flex rounded-lg border bg-card p-1 gap-1">
+          <span className="text-xs text-muted-foreground px-1">
+            Localização
+          </span>
+
+          <div className="flex flex-wrap rounded-lg border bg-card p-1 gap-1">
             {sigOptions.map(opt => (
               <button
                 key={opt.value}
@@ -44,8 +59,12 @@ export function FilterBar({ sigFilter, setSigFilter, origemFilter, setOrigemFilt
             ))}
           </div>
         </div>
+
         <div className="flex flex-col gap-1">
-          <span className="text-xs text-muted-foreground px-1">Origem</span>
+          <span className="text-xs text-muted-foreground px-1">
+            Origem
+          </span>
+
           <div className="flex rounded-lg border bg-card p-1 gap-1">
             {origemOptions.map(opt => (
               <button

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 
 import { Card } from '@/components/ui/card';
@@ -74,30 +75,46 @@ export function ColorAnalysisPanel({
   const saidaTotal =
     vendasValue + consumoValue;
 
-  // ESTOQUE FÍSICO
+  // ESTOQUE POR LOCALIZAÇÃO
+  const estoqueRS =
+    Number(cor.estoqueRS) || 0;
+
+  const estoqueSC =
+    Number(cor.estoqueSC) || 0;
+
+  const estoqueEADI =
+    Number(cor.estoqueEADI) || 0;
+
+  // ESTOQUE FÍSICO LOCAL: RS + SC
   const estoqueFisico =
-    Number(cor.estoque) || 0;
+    estoqueRS + estoqueSC;
+
+  // ESTOQUE FÍSICO TOTAL: RS + SC + EADI
+  const estoqueFisicoTotal =
+    estoqueFisico + estoqueEADI;
 
   // COMPRAS EM ABERTO
   const comprasAberto =
     Number(cor.compras) || 0;
 
+  // ORDENS DE PRODUÇÃO
+  const ordensProducao =
+    Number(cor.op) || 0;
+
   // ESTOQUE DISPONÍVEL
   const estoqueDisponivel =
-    estoqueFisico + comprasAberto;
+    estoqueFisicoTotal + comprasAberto;
 
   // MÉDIA MENSAL DA SAÍDA
   const mediaMensalSaida =
     selectedWindow.months > 0
-      ? saidaTotal /
-        selectedWindow.months
+      ? saidaTotal / selectedWindow.months
       : 0;
 
   // COBERTURA EM MESES
   const cobertura =
     mediaMensalSaida > 0
-      ? estoqueDisponivel /
-        mediaMensalSaida
+      ? estoqueDisponivel / mediaMensalSaida
       : Infinity;
 
   // GRÁFICO
@@ -107,48 +124,57 @@ export function ColorAnalysisPanel({
     windowKey
   );
 
+  // INDICADORES
   const metrics = [
     {
       label: 'Estoque Geral',
       value: cor.estoqueGeral,
-      color: 'text-[#315d78]',
-      bg: 'bg-[#eef4f7]',
-      border: 'border-[#dbe7ec]',
+      color: 'text-[#75b8ff]',
+      bg: 'bg-[#203b5c]',
+      border: 'border-[#416487]',
     },
     {
-      label: 'Estoque Físico',
+      label: 'Estoque Físico (RS + SC)',
       value: estoqueFisico,
-      color: 'text-[#526575]',
-      bg: 'bg-[#f1f4f6]',
-      border: 'border-[#e1e7eb]',
+      color: 'text-[#d2e5f7]',
+      bg: 'bg-[#203b5c]',
+      border: 'border-[#416487]',
+    },
+    {
+      label: 'Estoque EADI',
+      value: estoqueEADI,
+      color: 'text-[#75b8ff]',
+      bg: 'bg-[#203b5c]',
+      border: 'border-[#416487]',
+      labelColor: 'text-[#c5d8ec]',
     },
     {
       label: 'Compras em Aberto',
       value: comprasAberto,
-      color: 'text-[#c77a00]',
-      bg: 'bg-[#fff8e8]',
-      border: 'border-[#f2e6c4]',
+      color: 'text-[#ffb52e]',
+      bg: 'bg-[#40351f]',
+      border: 'border-[#70572c]',
     },
     {
       label: 'Ordens de Produção',
-      value: cor.op,
-      color: 'text-[#7654a3]',
-      bg: 'bg-[#f5f0fa]',
-      border: 'border-[#e9def2]',
+      value: ordensProducao,
+      color: 'text-[#c39bff]',
+      bg: 'bg-[#382e50]',
+      border: 'border-[#574573]',
     },
     {
       label: `Vendas (${selectedWindow.label})`,
       value: vendasValue,
-      color: 'text-[#269653]',
-      bg: 'bg-[#eef8f1]',
-      border: 'border-[#dcefe2]',
+      color: 'text-[#38d98b]',
+      bg: 'bg-[#193f3b]',
+      border: 'border-[#28695c]',
     },
     {
       label: `Consumo (${selectedWindow.label})`,
       value: consumoValue,
-      color: 'text-[#d96b32]',
-      bg: 'bg-[#fff3ea]',
-      border: 'border-[#f2dfd2]',
+      color: 'text-[#ff985b]',
+      bg: 'bg-[#493326]',
+      border: 'border-[#795239]',
     },
   ];
 
@@ -254,7 +280,12 @@ export function ColorAnalysisPanel({
                 p-3
               `}
             >
-              <p className="text-[11px] text-slate-500">
+              <p
+                className={`
+                  text-[11px]
+                  ${m.labelColor || 'text-slate-300'}
+                `}
+              >
                 {m.label}
               </p>
 
@@ -280,16 +311,16 @@ export function ColorAnalysisPanel({
           <div
             className="
               rounded-xl
-              border border-[#dbe7ec]
-              bg-[#eef4f7]
+              border border-[#416487]
+              bg-[#203b5c]
               p-3
             "
           >
-            <p className="text-[11px] text-slate-500">
+            <p className="text-[11px] text-slate-300">
               Saída Total ({selectedWindow.label})
             </p>
 
-            <p className="mt-0.5 text-lg font-bold text-[#315d78]">
+            <p className="mt-0.5 text-lg font-bold text-[#75b8ff]">
               {fmtQty(saidaTotal)}
             </p>
 
@@ -302,21 +333,21 @@ export function ColorAnalysisPanel({
           <div
             className="
               rounded-xl
-              border border-[#dfe3f0]
-              bg-[#f1f3fa]
+              border border-[#416487]
+              bg-[#203b5c]
               p-3
             "
           >
-            <p className="text-[11px] text-slate-500">
+            <p className="text-[11px] text-slate-300">
               Cobertura ({selectedWindow.label})
             </p>
 
-            <p className="mt-0.5 text-lg font-bold text-[#5369a6]">
+            <p className="mt-0.5 text-lg font-bold text-[#75b8ff]">
               {fmtCobertura(cobertura)}
             </p>
 
             <p className="mt-1 text-[10px] text-slate-400">
-              Estoque físico + compras ÷ média mensal de saída
+              RS + SC + EADI + compras ÷ média mensal de saída
             </p>
           </div>
 
@@ -336,8 +367,29 @@ export function ColorAnalysisPanel({
           "
         >
           <span>
+            Estoque RS:{' '}
+            <strong className="font-medium text-slate-600">
+              {fmtQty(estoqueRS)}
+            </strong>
+          </span>
+
+          <span>
+            Estoque SC:{' '}
+            <strong className="font-medium text-slate-600">
+              {fmtQty(estoqueSC)}
+            </strong>
+          </span>
+
+          <span>
+            Estoque EADI:{' '}
+            <strong className="font-medium text-[#315d78]">
+              {fmtQty(estoqueEADI)}
+            </strong>
+          </span>
+
+          <span>
             Estoque disponível:{' '}
-            <strong className="font-medium text-slate-700">
+            <strong className="font-medium text-slate-600">
               {fmtQty(estoqueDisponivel)}
             </strong>
           </span>

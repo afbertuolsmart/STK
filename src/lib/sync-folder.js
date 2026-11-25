@@ -1,3 +1,4 @@
+
 /* global process */
 
 import * as fs from 'fs';
@@ -5,7 +6,15 @@ import * as path from 'path';
 import { fileURLToPath } from 'url';
 import XLSX from 'xlsx';
 
-const DATASETS = ['estoque', 'compras', 'consumo', 'vendas', 'ordens'];
+const DATASETS = [
+  'estoque',
+  'estoqueeadi',
+  'compras',
+  'consumo',
+  'vendas',
+  'ordens'
+];
+
 const EXTS = ['.xlsx', '.xls', '.xlsm', '.csv'];
 
 const ROOT_DIR = path.resolve(
@@ -49,6 +58,9 @@ const NUMERIC_FIELDS = new Set([
 const FIELD_MAP = {
   'Produto': 'produto',
   'Desc.completa': 'desc_completa',
+  'Desc. Completa': 'desc_completa',
+  'Descrição completa': 'desc_completa',
+  'Descricao completa': 'desc_completa',
   'Qtd.física': 'qtd_fisica',
   'Qtd.fisica': 'qtd_fisica',
   'Vlr.tot.est': 'vlr_tot_est',
@@ -255,7 +267,6 @@ const once = args.includes('--once');
 
 if (once) {
   const success = convertAll();
-
   process.exit(success ? 0 : 1);
 }
 
